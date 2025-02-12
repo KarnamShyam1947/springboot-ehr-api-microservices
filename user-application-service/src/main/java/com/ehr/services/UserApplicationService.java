@@ -4,17 +4,18 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+// import org.springframework.beans.factory.annotation.Qualifier;
+// import org.springframework.core.ParameterizedTypeReference;
+// import org.springframework.http.HttpEntity;
+// import org.springframework.http.HttpHeaders;
+// import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+// import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+// import org.springframework.web.client.RestTemplate;
 
+import com.ehr.clients.UserServiceClient;
 import com.ehr.dto.UserApplicationRequest;
 import com.ehr.dto.UserDTO;
 import com.ehr.entities.UserApplicationEntity;
@@ -32,22 +33,25 @@ import lombok.RequiredArgsConstructor;
 public class UserApplicationService {
 
     private final UserApplicationRepository userApplicationRepository;
+    private final UserServiceClient userServiceClient;
 
-    @Qualifier(value = "user-service")
-    private final RestTemplate restTemplate;
+    // @Qualifier(value = "user-service")
+    // private final RestTemplate restTemplate;
 
     public UserApplicationEntity addUser(long applicationId) throws RequestedEntityNotFoundException {
         UserApplicationEntity user = userApplicationRepository.findById(applicationId).orElseThrow(() -> new RequestedEntityNotFoundException());
         System.out.println("in service : " + user);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        // HttpHeaders headers = new HttpHeaders();
+        // headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<UserApplicationEntity> requestEntity = new HttpEntity<>(user, headers);
+        // HttpEntity<UserApplicationEntity> requestEntity = new HttpEntity<>(user, headers);
 
-        ResponseEntity<UserDTO> exchange = restTemplate.exchange("/add-from-application", HttpMethod.POST, requestEntity, new ParameterizedTypeReference<UserDTO>() {});
-        System.out.println(exchange.getBody());
-        if (exchange.getStatusCode().value() == HttpStatus.CREATED.value()) {
+        // ResponseEntity<UserDTO> exchange = restTemplate.exchange("/add-from-application", HttpMethod.POST, requestEntity, new ParameterizedTypeReference<UserDTO>() {});
+        ResponseEntity<UserDTO> userFromApplication = userServiceClient.addUserFromApplication(user);
+
+        System.out.println(userFromApplication.getBody());
+        if (userFromApplication.getStatusCode().value() == HttpStatus.CREATED.value()) {
             return user;
         }
         return null;
