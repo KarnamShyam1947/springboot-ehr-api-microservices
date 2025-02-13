@@ -39,7 +39,7 @@ public class PatientController {
     @GetMapping("/{patient-id}/appointment")
     public ResponseEntity<?> appointments(
         @PathVariable("patient-id") long patientId
-    ) {
+    ) throws RequestedEntityNotFoundException {
         List<AppointmentDTO> patientAppointments = patientService.getAppointment(patientId);
         List<Long> doctorIds = patientAppointments.stream().map(a -> a.getDoctorId()).collect(Collectors.toList());
         doctorIds.add(patientId);

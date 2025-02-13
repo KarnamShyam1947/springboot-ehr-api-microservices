@@ -3,15 +3,13 @@ package com.ehr.services;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
+import com.ehr.clients.UserServiceClient;
 import com.ehr.dto.AppointmentRequest;
 import com.ehr.dto.UserDTO;
-import com.ehr.dto.UserResponse;
 import com.ehr.entities.AppointmentEntity;
 import com.ehr.enums.AppointmentStatus;
 import com.ehr.exceptions.EntityAlreadyExistsException;
@@ -25,13 +23,15 @@ import lombok.RequiredArgsConstructor;
 public class AppointmentService {
     
     private final AppointmentRepository appointmentRepository;
+    private final UserServiceClient userServiceClient;
 
-    @Qualifier(value = "user-service")
-    private final RestTemplate restTemplate;
+    // @Qualifier(value = "user-service")
+    // private final RestTemplate restTemplate;
 
-    public AppointmentEntity addAppointment(AppointmentRequest request) throws EntityAlreadyExistsException {
+    public AppointmentEntity addAppointment(AppointmentRequest request) throws EntityAlreadyExistsException, RequestedEntityNotFoundException {
 
-        ResponseEntity<UserDTO> doctor = restTemplate.getForEntity("/details/{user-id}", UserDTO.class, request.getDoctorId());
+        // ResponseEntity<UserDTO> doctor = restTemplate.getForEntity("/details/{user-id}", UserDTO.class, request.getDoctorId());
+        ResponseEntity<UserDTO> doctor = userServiceClient.getById(request.getDoctorId());
         if (doctor.getStatusCode().value() == HttpStatus.NOT_FOUND.value()) 
             throw new RuntimeException("Doctor not found.");
 
@@ -78,8 +78,9 @@ public class AppointmentService {
         return appointmentRepository.findByPatientId(id);
     }
 
-    public UserResponse getUser(long id) {
-        ResponseEntity<UserResponse> forEntity = restTemplate.getForEntity("/details/{user-id}", UserResponse.class, id);
+    public UserDTO getUser(long id) throws RequestedEntityNotFoundException {
+        // ResponseEntity<UserResponse> forEntity = restTemplate.getForEntity("/details/{user-id}", UserResponse.class, id);
+        ResponseEntity<UserDTO> forEntity = userServiceClient.getById(id);
         return forEntity.getBody();
     }
 

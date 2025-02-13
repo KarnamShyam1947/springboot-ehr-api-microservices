@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping("/all-details")
-    public ResponseEntity<List<UserResponse>> getaAll(@RequestBody List<Long> iDs) throws RequestedEntityNotFoundException {
+    public ResponseEntity<List<UserResponse>> getAll(@RequestBody List<Long> iDs) throws RequestedEntityNotFoundException {
         System.out.println(iDs);
         List<UserResponse> all = userService.getAll(iDs);
         return ResponseEntity

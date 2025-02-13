@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ehr.dto.AppointmentRequest;
-import com.ehr.dto.UserResponse;
+import com.ehr.dto.UserDTO;
 import com.ehr.entities.AppointmentEntity;
 import com.ehr.enums.AppointmentStatus;
 import com.ehr.exceptions.EntityAlreadyExistsException;
@@ -51,11 +51,11 @@ public class AppointmentController {
     
     @PostMapping("/{appointment-id}/cancel")
     public ResponseEntity<?> cancelAppointment(
-        @PathVariable("appointment-id") int appointmentId,
+        @PathVariable("appointment-id") long appointmentId,
         @RequestBody String reason
     ) throws RequestedEntityNotFoundException {
         AppointmentEntity appointment = appointmentService.getAppointment(appointmentId);
-        UserResponse currentUser = appointmentService.getUser(appointment.getPatientId());
+        UserDTO currentUser = appointmentService.getUser(appointment.getPatientId());
         if (currentUser.getId() != appointment.getPatientId()) 
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you can't access other user appointment");
 
@@ -74,7 +74,7 @@ public class AppointmentController {
     
     @GetMapping("/{user-id}/patient")
     public ResponseEntity<?> getAppointmentByUser(
-        @PathVariable("user-id") int userId
+        @PathVariable("user-id") long userId
     ) throws RequestedEntityNotFoundException {
         return ResponseEntity
                 .status(HttpStatus.OK.value())
@@ -93,7 +93,7 @@ public class AppointmentController {
     @PostMapping
     public ResponseEntity<?> addAppointments(
         @Valid @RequestBody AppointmentRequest request
-    ) throws EntityAlreadyExistsException {
+    ) throws EntityAlreadyExistsException, RequestedEntityNotFoundException {
         return ResponseEntity
                 .status(HttpStatus.CREATED.value())
                 .body(appointmentService.addAppointment(request));
