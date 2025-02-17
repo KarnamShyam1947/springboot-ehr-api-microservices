@@ -1,4 +1,4 @@
-package com.shyam.config;
+package com.ehr.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.shyam.config.custom;
+package com.ehr.config.custom;
 
 import java.util.Collection;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.shyam.entities.UserEntity;
+import com.ehr.entities.UserEntity;
 
 import lombok.RequiredArgsConstructor;
 

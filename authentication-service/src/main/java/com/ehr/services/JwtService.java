@@ -1,4 +1,4 @@
-package com.shyam.services;
+package com.ehr.services;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,8 +22,8 @@ public class JwtService {
     @Value("${application.jwt.secret.key}")
     private String secretKey;
 
-    @Value("${application.jwt.experiation}")
-    private long experiation;
+    @Value("${application.jwt.expiration}")
+    private long expiration;
 
     // generate secret key
     public SecretKey getSecretKey() {
@@ -39,12 +39,22 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .claims(claims)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + experiation)) // 10 min
+                .expiration(new Date(System.currentTimeMillis() + expiration)) // 10 min
                 .compact();
     }
 
     public String generateJwtToken(UserDetails userDetails) {
         return generateJwtToken(userDetails, new HashMap<>());
+    }
+
+    public String generateJwtToken(String subject) {
+        return Jwts
+                .builder()
+                .signWith(getSecretKey())
+                .subject(subject)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiration)) // 10 min
+                .compact();
     }
 
     // extract claims

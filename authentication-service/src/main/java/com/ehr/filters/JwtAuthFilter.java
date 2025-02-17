@@ -1,9 +1,5 @@
-package com.shyam.filters;
+package com.ehr.filters;
 
-import com.shyam.config.custom.MyUserDetails;
-import com.shyam.entities.UserEntity;
-import com.shyam.repositories.UserRepository;
-import com.shyam.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +14,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import com.ehr.config.custom.MyUserDetails;
+import com.ehr.entities.UserEntity;
+import com.ehr.repositories.UserRepository;
+import com.ehr.services.JwtService;
 
 import java.io.IOException;
 

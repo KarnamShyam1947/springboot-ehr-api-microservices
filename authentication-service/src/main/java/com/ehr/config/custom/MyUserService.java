@@ -1,12 +1,12 @@
-package com.shyam.config.custom;
+package com.ehr.config.custom;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.shyam.entities.UserEntity;
-import com.shyam.repositories.UserRepository;
+import com.ehr.entities.UserEntity;
+import com.ehr.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
