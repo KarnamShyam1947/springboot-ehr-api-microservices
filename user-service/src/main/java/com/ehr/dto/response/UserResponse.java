@@ -1,4 +1,4 @@
-package com.ehr.dto;
+package com.ehr.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

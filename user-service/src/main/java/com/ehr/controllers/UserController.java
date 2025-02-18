@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ehr.dto.UserApplicationRequest;
-import com.ehr.dto.UserRequest;
-import com.ehr.dto.UserResponse;
-import com.ehr.dto.VerifyHashRequest;
+import com.ehr.dto.request.UserApplicationRequest;
+import com.ehr.dto.request.UserRequest;
+import com.ehr.dto.request.VerifyHashRequest;
+import com.ehr.dto.response.UserResponse;
 import com.ehr.entities.UserEntity;
 import com.ehr.exceptions.EntityAlreadyExistsException;
 import com.ehr.exceptions.RequestedEntityNotFoundException;

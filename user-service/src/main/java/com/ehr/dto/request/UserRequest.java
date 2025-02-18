@@ -1,4 +1,4 @@
-package com.ehr.dto;
+package com.ehr.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,9 @@ public class UserRequest {
 
     @NotBlank(message = "username is required")
     private String username;
+    
+    @NotBlank(message = "password is required")
+    private String password;
 
     @NotBlank(message = "phoneNumber is required")
     private String phoneNumber;

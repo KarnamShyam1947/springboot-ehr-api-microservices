@@ -3,15 +3,20 @@ package com.ehr.services;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.ehr.dto.UserApplicationRequest;
-import com.ehr.dto.UserRequest;
-import com.ehr.dto.UserResponse;
+import com.ehr.clients.AuthenticationClient;
+import com.ehr.dto.request.CreateUserRequest;
+import com.ehr.dto.request.SetPasswordRequest;
+import com.ehr.dto.request.UserApplicationRequest;
+import com.ehr.dto.request.UserRequest;
+import com.ehr.dto.response.UserResponse;
 import com.ehr.entities.UserEntity;
 import com.ehr.enums.ApplicationType;
 import com.ehr.enums.Role;
@@ -28,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AuthenticationClient authenticationClient;
 
     public UserEntity getById(long id) throws RequestedEntityNotFoundException {
         return userRepository
@@ -37,7 +43,7 @@ public class UserService {
 
     public UserEntity addUserFromApplication(UserApplicationRequest request) {
         UserEntity user = new UserEntity();
-        System.out.println("In userservice : " + request);
+        
         BeanUtils.copyProperties(request, user);
         
         user.setId(0);
@@ -62,21 +68,33 @@ public class UserService {
         
         UserEntity userWall = userRepository.findByWalletAddress(request.getWalletAddress());
         if (userWall != null)
-        throw new EntityAlreadyExistsException("User already exists with same wallet address : " + request.getWalletAddress());
+            throw new EntityAlreadyExistsException("User already exists with same wallet address : " + request.getWalletAddress());
 
         UserEntity user = new UserEntity();
         BeanUtils.copyProperties(request, user);
         user.setRole(Role.PATIENT);
 
+        ResponseEntity<Map<String, Object>> register = authenticationClient.register(
+            new CreateUserRequest("PATIENT", request.getEmail(), request.getPassword())
+        );
+        System.out.println(register);
+
         return userRepository.save(user);
     }
 
-    public UserEntity setPassword(String token) throws RequestedEntityNotFoundException, TokenExpiredException {
-        UserEntity user = userRepository.findByToken(token)
+    // TODO : Move to authentication service
+    public UserEntity setPassword(SetPasswordRequest request) throws RequestedEntityNotFoundException, TokenExpiredException, EntityAlreadyExistsException {
+        UserEntity user = userRepository.findByToken(request.getToken())
                             .orElseThrow(() -> new RequestedEntityNotFoundException("Invalid link"));
 
         if (user.getExpireTime() == null || user.getExpireTime().before(new Date())) 
             throw new TokenExpiredException("The link is expired. please request again for a new link");
+
+        authenticationClient.register(new CreateUserRequest(
+            user.getRole().name(),
+            user.getEmail(),
+            request.getPassword()
+        ));
 
         user.setToken(null);
         user.setExpireTime(null);

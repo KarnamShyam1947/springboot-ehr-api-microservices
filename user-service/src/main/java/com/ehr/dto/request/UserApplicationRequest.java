@@ -1,4 +1,4 @@
-package com.ehr.dto;
+package com.ehr.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
