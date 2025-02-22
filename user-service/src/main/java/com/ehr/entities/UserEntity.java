@@ -1,7 +1,5 @@
 package com.ehr.entities;
 
-import java.util.Date;
-
 import com.ehr.enums.Role;
 
 import jakarta.persistence.Column;
@@ -12,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,11 +31,7 @@ public class UserEntity {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
-    private Date expireTime;
-
     private String email;
-    private String token;
     private String username;
     private String resumeUrl;
     private double experience;

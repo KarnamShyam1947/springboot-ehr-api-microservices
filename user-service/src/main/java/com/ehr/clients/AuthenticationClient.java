@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.ehr.dto.request.CreateUserRequest;
 import com.ehr.exceptions.EntityAlreadyExistsException;
 
-@FeignClient(name = "USER-SERVICE")
+@FeignClient(name = "AUTHENTICATION-SERVICE")
 public interface AuthenticationClient {
     
-    @PostMapping("/register")
+    @PostMapping("/api/v1/auth/register")
     public ResponseEntity<Map<String, Object>> register(
         @RequestBody CreateUserRequest userRequest
     ) throws EntityAlreadyExistsException;
