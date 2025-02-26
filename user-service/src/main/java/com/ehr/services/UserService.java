@@ -1,10 +1,7 @@
 package com.ehr.services;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.ehr.clients.AuthenticationClient;
 import com.ehr.dto.request.CreateUserRequest;
-import com.ehr.dto.request.SetPasswordRequest;
 import com.ehr.dto.request.UserApplicationRequest;
 import com.ehr.dto.request.UserRequest;
 import com.ehr.dto.response.UserResponse;
@@ -22,9 +18,7 @@ import com.ehr.enums.ApplicationType;
 import com.ehr.enums.Role;
 import com.ehr.exceptions.EntityAlreadyExistsException;
 import com.ehr.exceptions.RequestedEntityNotFoundException;
-import com.ehr.exceptions.TokenExpiredException;
 import com.ehr.repositories.UserRepository;
-import com.ehr.utils.Utils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,10 +47,8 @@ public class UserService {
         if(request.getType().equals(ApplicationType.LAB_TECHNICIAN.name()))
             user.setRole(Role.LAD_TECHNICIAN);
 
-        user.setToken(UUID.randomUUID().toString());
-        user.setExpireTime(Utils.getAddedDate(1, Calendar.HOUR));
-        // TODO: main servive send link
-        
+        // TODO: Send Mail
+
         return userRepository.save(user);
     }
 
@@ -81,27 +73,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
-
-    // TODO : Move to authentication service
-    public UserEntity setPassword(SetPasswordRequest request) throws RequestedEntityNotFoundException, TokenExpiredException, EntityAlreadyExistsException {
-        UserEntity user = userRepository.findByToken(request.getToken())
-                            .orElseThrow(() -> new RequestedEntityNotFoundException("Invalid link"));
-
-        if (user.getExpireTime() == null || user.getExpireTime().before(new Date())) 
-            throw new TokenExpiredException("The link is expired. please request again for a new link");
-
-        authenticationClient.register(new CreateUserRequest(
-            user.getRole().name(),
-            user.getEmail(),
-            request.getPassword()
-        ));
-
-        user.setToken(null);
-        user.setExpireTime(null);
-        
-        return userRepository.save(user);
-    }
-
+    
     public List<UserEntity> getPatients() {
         return userRepository.findByRole(Role.PATIENT);
     }

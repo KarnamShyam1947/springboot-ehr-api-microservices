@@ -1,4 +1,4 @@
-package com.ehr.dto.request;
+package com.ehr.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

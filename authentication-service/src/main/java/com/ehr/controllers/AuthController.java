@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ehr.config.custom.MyUserDetails;
 import com.ehr.dto.LoginRequest;
+import com.ehr.dto.SetPasswordRequest;
 import com.ehr.dto.UserRequest;
 import com.ehr.dto.VerifyRequest;
 import com.ehr.entities.UserEntity;
 import com.ehr.exceptions.BadRequestException;
 import com.ehr.exceptions.EntityAlreadyExistsException;
 import com.ehr.exceptions.RequestedEntityNotFoundException;
+import com.ehr.exceptions.TokenExpiredException;
 import com.ehr.services.AuthService;
 import com.ehr.services.JwtService;
 
@@ -76,6 +78,39 @@ public class AuthController {
                         "user", register
                     )
                 );
+    }
+
+    @PostMapping("/send-verification-email")
+    public ResponseEntity<Map<String, Object>> sendVerificationEmail(
+        @RequestBody Map<String, Object> requestMap
+    ) throws BadRequestException, RequestedEntityNotFoundException {
+        String email = (String)requestMap.get("email");
+
+        if (email == null)
+            throw new BadRequestException("Unable to find email in request body");
+
+        UserEntity sendVerificationEmail = authService.sendVerificationEmail(email);
+        return ResponseEntity
+                .status(200)
+                .body(Map.of(
+                    "message", "mail sent successfully",
+                    "user", sendVerificationEmail
+                ));
+    }
+    
+    @PostMapping("/set-password")
+    public ResponseEntity<Map<String, Object>> setPassword(
+        @RequestBody SetPasswordRequest request
+    ) throws BadRequestException, RequestedEntityNotFoundException, TokenExpiredException, EntityAlreadyExistsException {
+
+        UserEntity setPassword = authService.setPassword(request);
+
+        return ResponseEntity
+                .status(200)
+                .body(Map.of(
+                    "message", "mail sent successfully",
+                    "user", setPassword
+                ));
     }
 
     @PostMapping("/generate-token")
